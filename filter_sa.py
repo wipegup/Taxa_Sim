@@ -38,7 +38,7 @@ def build_info_df(filter = 'SA'):
 def find_distribution(threshold, filter):
     col_name = "in_area"#+ filter.lower()
 
-    df = build_info_df()
+    df = build_info_df(filter)
     gen = df.groupby("genus")[col_name].mean().sort_values()
     keep = list(gen[gen >= threshold].index)
     return df[df['genus'].isin(keep)].groupby('genus')['species'].count().value_counts()
@@ -147,6 +147,18 @@ def print_output(lg_df):
         ax.vlines(lg_df.loc[i, 'sub_taxa'], *ax.get_ylim(), color = 'red')
         ax.set_title(lg_df.loc[i,'name'])
     plt.tight_layout()
+
+filter_list = ['SA', '','AF', "AU","MA", "PO","OR","NA","EU", "IO"]
+
+all_data = []
+
+for f in filter_list:
+    df = perform_simulation(10000, f)
+
+    all_data.append(df)
+df = pd.concat(all_data)
+
+df.to_csv('all_sim.csv', index = False)
 
 dist_dict = {1: 330,
  2: 130,
